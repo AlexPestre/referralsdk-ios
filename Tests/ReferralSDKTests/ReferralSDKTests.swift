@@ -4,13 +4,13 @@ import XCTest
 final class ReferralSDKTests: XCTestCase {
 
     func testJSONBuilderGenerateCode() {
-        let json = JSONBuilder.generateCode(referrerId: "user_A", programId: "prog_1", customCode: nil)
-        XCTAssertEqual(json, "{\"referrerId\":\"user_A\",\"programId\":\"prog_1\"}")
+        let json = JSONBuilder.generateCode(referrerId: "user_A", programKey: "prk_abc123", customCode: nil)
+        XCTAssertEqual(json, "{\"referrerId\":\"user_A\",\"programKey\":\"prk_abc123\"}")
     }
 
     func testJSONBuilderGenerateCodeWithCustom() {
-        let json = JSONBuilder.generateCode(referrerId: "user_A", programId: "prog_1", customCode: "ALEX25")
-        XCTAssertEqual(json, "{\"referrerId\":\"user_A\",\"programId\":\"prog_1\",\"customCode\":\"ALEX25\"}")
+        let json = JSONBuilder.generateCode(referrerId: "user_A", programKey: "prk_abc123", customCode: "ALEX25")
+        XCTAssertEqual(json, "{\"referrerId\":\"user_A\",\"programKey\":\"prk_abc123\",\"customCode\":\"ALEX25\"}")
     }
 
     func testJSONBuilderRedeemCode() {
@@ -19,8 +19,8 @@ final class ReferralSDKTests: XCTestCase {
     }
 
     func testJSONBuilderEscaping() {
-        let json = JSONBuilder.generateCode(referrerId: "user\"A", programId: "prog\\1", customCode: nil)
-        XCTAssertEqual(json, "{\"referrerId\":\"user\\\"A\",\"programId\":\"prog\\\\1\"}")
+        let json = JSONBuilder.generateCode(referrerId: "user\"A", programKey: "prk_ab\\cd", customCode: nil)
+        XCTAssertEqual(json, "{\"referrerId\":\"user\\\"A\",\"programKey\":\"prk_ab\\\\cd\"}")
     }
 
     func testHMACHelperProducesConsistentSignature() {
