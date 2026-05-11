@@ -90,7 +90,7 @@ public final class ReferralSDK: @unchecked Sendable {
         customCode: String? = nil
     ) async throws -> ReferralCodeResponse {
         let bodyJSON = JSONBuilder.generateCode(referrerId: referrerId, programId: programId, customCode: customCode)
-        let payload  = buildPayload(bodyJSON: bodyJSON)
+        let payload  = buildPayload(bodyJSON: bodyJSON, extra: ["platform": "ios"])
         return try await apiClient.call(function: "generateReferralCode", payload: payload)
     }
 
@@ -106,7 +106,7 @@ public final class ReferralSDK: @unchecked Sendable {
     ) async throws -> RedeemResponse {
         let resolvedDeviceId = deviceId ?? KeychainDeviceID.value
         let bodyJSON = JSONBuilder.redeemCode(code: code, refereeId: refereeId, deviceId: resolvedDeviceId)
-        let payload  = buildPayload(bodyJSON: bodyJSON)
+        let payload  = buildPayload(bodyJSON: bodyJSON, extra: ["platform": "ios"])
         return try await apiClient.call(function: "redeemReferralCode", payload: payload)
     }
 
