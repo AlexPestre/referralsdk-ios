@@ -7,7 +7,7 @@ import SwiftUI
 /// @StateObject var referral = ReferralEnvironment()
 ///
 /// Button("Partager mon code") {
-///     Task { await referral.loadCode(referrerId: userId, programId: programId) }
+///     Task { await referral.loadCode(referrerId: userId, programKey: "prk_xxx") }
 /// }
 /// Text(referral.referralCode ?? "Chargement...")
 /// ```
@@ -27,11 +27,11 @@ public final class ReferralEnvironment: ObservableObject {
 
     public init() {}
 
-    public func loadCode(referrerId: String, programId: String, customCode: String? = nil) async {
+    public func loadCode(referrerId: String, programKey: String, customCode: String? = nil) async {
         isLoading = true
         error = nil
         do {
-            let response = try await sdk.generateReferralCode(referrerId: referrerId, programId: programId, customCode: customCode)
+            let response = try await sdk.generateReferralCode(referrerId: referrerId, programKey: programKey, customCode: customCode)
             referralCode = response.code
         } catch {
             self.error = error.localizedDescription
