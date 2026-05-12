@@ -81,16 +81,20 @@ public final class ReferralSDK: @unchecked Sendable {
 
     /// Génère (ou retourne) le code de parrainage d'un utilisateur.
     /// - Parameters:
-    ///   - referrerId: Identifiant opaque du parrain (votre user ID)
+    ///   - referrerId: Identifiant opaque du parrain (UUID stable de l'appareil)
     ///   - programKey: Clé publique du programme (prk_xxx — visible dans le dashboard)
     ///   - customCode: Code personnalisé optionnel (ex: "ALEX25")
+    ///   - referrerEmail: Email du parrain (pour l'affichage dans le dashboard et le paiement)
     public func generateReferralCode(
         referrerId: String,
         programKey: String,
-        customCode: String? = nil
+        customCode: String? = nil,
+        referrerEmail: String? = nil
     ) async throws -> ReferralCodeResponse {
         let bodyJSON = JSONBuilder.generateCode(referrerId: referrerId, programKey: programKey, customCode: customCode)
-        let payload  = buildPayload(bodyJSON: bodyJSON, extra: ["platform": "ios"])
+        var extra: [String: Any] = ["platform": "ios"]
+        if let email = referrerEmail { extra["referrerEmail"] = email }
+        let payload  = buildPayload(bodyJSON: bodyJSON, extra: extra)
         return try await apiClient.call(function: "generateReferralCode", payload: payload)
     }
 
