@@ -34,6 +34,22 @@ enum JSONBuilder {
         return s
     }
 
+    // redeemReferralCode body avec programId
+    static func redeemCode(code: String, refereeId: String, deviceId: String?, programId: String) -> String {
+        var s = "{\"code\":\"\(escape(code))\",\"refereeId\":\"\(escape(refereeId))\""
+        if let d = deviceId { s += ",\"deviceId\":\"\(escape(d))\"" }
+        s += ",\"programId\":\"\(escape(programId))\"}"
+        return s
+    }
+
+    // redeemReferralCode body avec programKey public
+    static func redeemCode(code: String, refereeId: String, deviceId: String?, programKey: String) -> String {
+        var s = "{\"code\":\"\(escape(code))\",\"refereeId\":\"\(escape(refereeId))\""
+        if let d = deviceId { s += ",\"deviceId\":\"\(escape(d))\"" }
+        s += ",\"programKey\":\"\(escape(programKey))\"}"
+        return s
+    }
+
     // createReferral body
     static func createReferral(referrerId: String, refereeId: String, programId: String, metadata: [String: Any]?, idempotencyKey: String?) -> String {
         var s = "{\"referrerId\":\"\(escape(referrerId))\",\"refereeId\":\"\(escape(refereeId))\",\"programId\":\"\(escape(programId))\""

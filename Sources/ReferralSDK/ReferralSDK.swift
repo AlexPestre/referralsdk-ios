@@ -125,6 +125,42 @@ public final class ReferralSDK: @unchecked Sendable {
         return try await apiClient.call(function: "redeemReferralCode", payload: payload)
     }
 
+    /// Valide un code de parrainage pour un programme précis.
+    /// - Parameters:
+    ///   - code: Code saisi ou extrait d'un lien deep link
+    ///   - refereeId: Identifiant opaque du nouvel utilisateur
+    ///   - programId: ObjectId Parse du programme
+    ///   - deviceId: Identifiant stable de l'appareil (automatique si nil)
+    public func redeemReferralCode(
+        code: String,
+        refereeId: String,
+        programId: String,
+        deviceId: String? = nil
+    ) async throws -> RedeemResponse {
+        let resolvedDeviceId = deviceId ?? KeychainDeviceID.value
+        let bodyJSON = JSONBuilder.redeemCode(code: code, refereeId: refereeId, deviceId: resolvedDeviceId, programId: programId)
+        let payload  = buildPayload(bodyJSON: bodyJSON)
+        return try await apiClient.call(function: "redeemReferralCode", payload: payload)
+    }
+
+    /// Valide un code de parrainage pour un programme précis via sa clé publique.
+    /// - Parameters:
+    ///   - code: Code saisi ou extrait d'un lien deep link
+    ///   - refereeId: Identifiant opaque du nouvel utilisateur
+    ///   - programKey: Clé publique du programme (prk_...)
+    ///   - deviceId: Identifiant stable de l'appareil (automatique si nil)
+    public func redeemReferralCode(
+        code: String,
+        refereeId: String,
+        programKey: String,
+        deviceId: String? = nil
+    ) async throws -> RedeemResponse {
+        let resolvedDeviceId = deviceId ?? KeychainDeviceID.value
+        let bodyJSON = JSONBuilder.redeemCode(code: code, refereeId: refereeId, deviceId: resolvedDeviceId, programKey: programKey)
+        let payload  = buildPayload(bodyJSON: bodyJSON)
+        return try await apiClient.call(function: "redeemReferralCode", payload: payload)
+    }
+
     /// Crée un parrainage directement (sans code).
     /// - Parameters:
     ///   - referrerId: Identifiant opaque du parrain
