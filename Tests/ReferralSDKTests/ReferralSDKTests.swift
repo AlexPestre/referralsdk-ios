@@ -47,4 +47,12 @@ final class ReferralSDKTests: XCTestCase {
         XCTAssertEqual(id1, id2)
         XCTAssertFalse(id1.isEmpty)
     }
+
+    func testPurchaseAttributionAllowsOnlyDirectPurchases() {
+        XCTAssertTrue(PurchaseAttribution(source: .purchase).shouldCreateReferral)
+        XCTAssertFalse(PurchaseAttribution(source: .restore).shouldCreateReferral)
+        XCTAssertFalse(PurchaseAttribution(source: .currentEntitlement).shouldCreateReferral)
+        XCTAssertFalse(PurchaseAttribution(source: .familyShared).shouldCreateReferral)
+        XCTAssertFalse(PurchaseAttribution(source: .purchase, ownershipType: "familyShared").shouldCreateReferral)
+    }
 }

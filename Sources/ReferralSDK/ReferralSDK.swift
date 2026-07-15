@@ -77,6 +77,12 @@ public final class ReferralSDK: @unchecked Sendable {
         return payload
     }
 
+    private func mergeMetadata(_ metadata: [String: Any]?, purchase: PurchaseAttribution) -> [String: Any] {
+        var merged = metadata ?? [:]
+        merged.merge(purchase.metadata) { _, new in new }
+        return merged
+    }
+
     // MARK: - Public API
 
     /// Génère (ou retourne) le code de parrainage d'un utilisateur.
@@ -125,6 +131,18 @@ public final class ReferralSDK: @unchecked Sendable {
         return try await apiClient.call(function: "redeemReferralCode", payload: payload)
     }
 
+    /// Valide un code après un achat StoreKit éligible.
+    /// Retourne nil sans appel réseau pour les restaurations, current entitlements et partages familiaux.
+    public func redeemReferralCodeForPurchase(
+        code: String,
+        refereeId: String,
+        purchase: PurchaseAttribution,
+        deviceId: String? = nil
+    ) async throws -> RedeemResponse? {
+        guard purchase.shouldCreateReferral else { return nil }
+        return try await redeemReferralCode(code: code, refereeId: refereeId, deviceId: deviceId)
+    }
+
     /// Valide un code de parrainage pour un programme précis.
     /// - Parameters:
     ///   - code: Code saisi ou extrait d'un lien deep link
@@ -143,6 +161,19 @@ public final class ReferralSDK: @unchecked Sendable {
         return try await apiClient.call(function: "redeemReferralCode", payload: payload)
     }
 
+    /// Valide un code après un achat StoreKit éligible pour un programme précis.
+    /// Retourne nil sans appel réseau pour les restaurations, current entitlements et partages familiaux.
+    public func redeemReferralCodeForPurchase(
+        code: String,
+        refereeId: String,
+        programId: String,
+        purchase: PurchaseAttribution,
+        deviceId: String? = nil
+    ) async throws -> RedeemResponse? {
+        guard purchase.shouldCreateReferral else { return nil }
+        return try await redeemReferralCode(code: code, refereeId: refereeId, programId: programId, deviceId: deviceId)
+    }
+
     /// Valide un code de parrainage pour un programme précis via sa clé publique.
     /// - Parameters:
     ///   - code: Code saisi ou extrait d'un lien deep link
@@ -159,6 +190,19 @@ public final class ReferralSDK: @unchecked Sendable {
         let bodyJSON = JSONBuilder.redeemCode(code: code, refereeId: refereeId, deviceId: resolvedDeviceId, programKey: programKey)
         let payload  = buildPayload(bodyJSON: bodyJSON)
         return try await apiClient.call(function: "redeemReferralCode", payload: payload)
+    }
+
+    /// Valide un code après un achat StoreKit éligible pour un programme précis via sa clé publique.
+    /// Retourne nil sans appel réseau pour les restaurations, current entitlements et partages familiaux.
+    public func redeemReferralCodeForPurchase(
+        code: String,
+        refereeId: String,
+        programKey: String,
+        purchase: PurchaseAttribution,
+        deviceId: String? = nil
+    ) async throws -> RedeemResponse? {
+        guard purchase.shouldCreateReferral else { return nil }
+        return try await redeemReferralCode(code: code, refereeId: refereeId, programKey: programKey, deviceId: deviceId)
     }
 
     /// Crée un parrainage directement (sans code).
@@ -184,5 +228,25 @@ public final class ReferralSDK: @unchecked Sendable {
         )
         let payload = buildPayload(bodyJSON: bodyJSON)
         return try await apiClient.call(function: "createReferral", payload: payload)
+    }
+
+    /// Crée un parrainage uniquement pour un achat StoreKit direct.
+    /// Retourne nil sans appel réseau pour les restaurations, current entitlements et partages familiaux.
+    public func createReferralForPurchase(
+        referrerId: String,
+        refereeId: String,
+        programId: String,
+        purchase: PurchaseAttribution,
+        metadata: [String: Any]? = nil,
+        idempotencyKey: String? = nil
+    ) async throws -> ReferralResponse? {
+        guard purchase.shouldCreateReferral else { return nil }
+        return try await createReferral(
+            referrerId: referrerId,
+            refereeId: refereeId,
+            programId: programId,
+            metadata: mergeMetadata(metadata, purchase: purchase),
+            idempotencyKey: idempotencyKey
+        )
     }
 }
