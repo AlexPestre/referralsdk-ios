@@ -18,6 +18,14 @@ enum JSONBuilder {
         return s
     }
 
+    // generateReferralCode body avec programKey public
+    static func generateCode(referrerId: String, programKey: String, customCode: String?) -> String {
+        var s = "{\"referrerId\":\"\(escape(referrerId))\",\"programKey\":\"\(escape(programKey))\""
+        if let c = customCode { s += ",\"customCode\":\"\(escape(c))\"" }
+        s += "}"
+        return s
+    }
+
     // redeemReferralCode body
     static func redeemCode(code: String, refereeId: String, deviceId: String?) -> String {
         var s = "{\"code\":\"\(escape(code))\",\"refereeId\":\"\(escape(refereeId))\""

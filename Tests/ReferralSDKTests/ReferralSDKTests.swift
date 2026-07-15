@@ -13,6 +13,11 @@ final class ReferralSDKTests: XCTestCase {
         XCTAssertEqual(json, "{\"referrerId\":\"user_A\",\"programId\":\"prog_1\",\"customCode\":\"ALEX25\"}")
     }
 
+    func testJSONBuilderGenerateCodeWithProgramKey() {
+        let json = JSONBuilder.generateCode(referrerId: "user_A", programKey: "prk_123", customCode: nil)
+        XCTAssertEqual(json, "{\"referrerId\":\"user_A\",\"programKey\":\"prk_123\"}")
+    }
+
     func testJSONBuilderRedeemCode() {
         let json = JSONBuilder.redeemCode(code: "ABC123", refereeId: "user_B", deviceId: nil)
         XCTAssertEqual(json, "{\"code\":\"ABC123\",\"refereeId\":\"user_B\"}")

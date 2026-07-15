@@ -82,7 +82,7 @@ public final class ReferralSDK: @unchecked Sendable {
     /// Génère (ou retourne) le code de parrainage d'un utilisateur.
     /// - Parameters:
     ///   - referrerId: Identifiant opaque du parrain (votre user ID)
-    ///   - programId: ObjectId du programme de parrainage
+    ///   - programId: ObjectId Parse du programme de parrainage
     ///   - customCode: Code personnalisé optionnel (ex: "ALEX25")
     public func generateReferralCode(
         referrerId: String,
@@ -90,6 +90,21 @@ public final class ReferralSDK: @unchecked Sendable {
         customCode: String? = nil
     ) async throws -> ReferralCodeResponse {
         let bodyJSON = JSONBuilder.generateCode(referrerId: referrerId, programId: programId, customCode: customCode)
+        let payload  = buildPayload(bodyJSON: bodyJSON)
+        return try await apiClient.call(function: "generateReferralCode", payload: payload)
+    }
+
+    /// Génère (ou retourne) le code de parrainage d'un utilisateur avec la clé publique du programme.
+    /// - Parameters:
+    ///   - referrerId: Identifiant opaque du parrain (votre user ID)
+    ///   - programKey: Clé publique du programme (prk_...)
+    ///   - customCode: Code personnalisé optionnel (ex: "ALEX25")
+    public func generateReferralCode(
+        referrerId: String,
+        programKey: String,
+        customCode: String? = nil
+    ) async throws -> ReferralCodeResponse {
+        let bodyJSON = JSONBuilder.generateCode(referrerId: referrerId, programKey: programKey, customCode: customCode)
         let payload  = buildPayload(bodyJSON: bodyJSON)
         return try await apiClient.call(function: "generateReferralCode", payload: payload)
     }
