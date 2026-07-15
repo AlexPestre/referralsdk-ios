@@ -13,7 +13,9 @@ struct APIClient {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         // Le SDK injecte la plateforme — les credentials Parse sont gérés par le proxy
         request.setValue("ios",              forHTTPHeaderField: "X-RK-Platform")
-        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+        var payloadWithPlatform = payload
+        payloadWithPlatform["platform"] = "ios"
+        request.httpBody = try JSONSerialization.data(withJSONObject: payloadWithPlatform)
 
         let (data, response) = try await URLSession.shared.data(for: request)
 
